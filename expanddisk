@@ -1,0 +1,14 @@
+echo "p
+d
+2
+n
+e
+2
+n
+l
+
+p
+w" | fdisk /dev/mmcblk0
+echo rebooting in 15 seconds
+sleep 15
+reboot
