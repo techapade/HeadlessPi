@@ -1,0 +1,27 @@
+#!/bin/bash
+
+echo "Enter new host name:"
+read -e host
+
+diskutil unmountDisk /dev/disk1
+
+echo Install ArchLinuxARM-2014.06-rpi.img on disk1
+sudo dd bs=8m if=../osimages/ArchLinuxARM-2014.06-rpi.img of=/dev/rdisk1
+
+# rename disk
+HOST=$(echo $host | awk '{print toupper($0)}')
+diskutil rename "NO NAME" $HOST
+
+# reduce gpu memory to 16
+sed -i bak 's/gpu_mem_512=64/gpu_mem_512=16/' /Volumes/$HOST/config.txt
+
+# copy useful scripts to the boot directory
+cp ~/raspberrypi/setup/expanddisk /Volumes/$HOST/expanddisk
+cp ~/raspberrypi/setup/resizedisk /Volumes/$HOST/resizedisk
+cp ~/raspberrypi/setup/setuphost /Volumes/$HOST/setuphost
+cp ~/raspberrypi/setup/updatesys /Volumes/$HOST/updatesys
+echo $host > /Volumes/$HOST/hostname
+cp ~/.ssh/id_rsa.pub /Volumes/$HOST/authorized_keys
+# unmount
+diskutil unmountDisk /dev/disk1
+echo "Done"
